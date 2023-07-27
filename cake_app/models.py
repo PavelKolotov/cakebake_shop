@@ -10,6 +10,11 @@ class CakeCategory(models.Model):
         'название категории',
         max_length=100
     )
+    image = models.ImageField(
+        'изображение для категории',
+        null=True,
+        blank=True
+    )
 
     class Meta():
         verbose_name = 'категория торта'

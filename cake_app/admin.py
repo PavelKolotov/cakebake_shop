@@ -13,7 +13,16 @@ from .models import OrderItems
 
 @admin.register(CakeCategory)
 class CakeCategoryAdmin(admin.ModelAdmin):
-    pass
+    def preview_image(self, obj):
+        if not obj.image:
+            return 'выберите картинку'
+        return format_html('<img src="{url}" style="max-height: 200px;"/>', url=obj.image.url)
+    readonly_fields = ['preview_image',]
+    fields = [
+        'title',
+        'image',
+        'preview_image'
+    ]
 
 
 @admin.register(CatalogCake)
