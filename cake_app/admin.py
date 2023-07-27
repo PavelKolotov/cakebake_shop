@@ -62,9 +62,15 @@ class BakeryAdmin(admin.ModelAdmin):
     pass
 
 
+class OrderItemsInline(admin.TabularInline):
+    model = OrderItems
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    pass
+    inlines = [
+        OrderItemsInline
+    ]
 
 
 @admin.register(OrderItems)
