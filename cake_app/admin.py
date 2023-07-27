@@ -5,7 +5,6 @@ from .models import CakeCategory
 from .models import CatalogCake
 from .models import ComponentType
 from .models import Component
-from .models import Delivery
 from .models import Bakery
 from .models import Order
 from .models import OrderItems
@@ -49,11 +48,6 @@ class ComponentTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Component)
 class ComponentAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Delivery)
-class DeliveryAdmin(admin.ModelAdmin):
     pass
 
 

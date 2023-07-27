@@ -45,8 +45,8 @@ class CatalogCake(models.Model):
     image = models.ImageField('изображение торта')
 
     class Meta():
-        verbose_name = 'каталожный торт'
-        verbose_name_plural = 'каталожные торты'
+        verbose_name = 'торт из каталога'
+        verbose_name_plural = 'каталог тортов'
 
     def __str__(self):
         return self.title
@@ -92,34 +92,6 @@ class Component(models.Model):
         return self.title
 
 
-class Delivery(models.Model):
-    address = models.CharField(
-        'адрес доставки',
-        max_length=250
-    )
-    delivery_datetime = models.DateTimeField(
-        'время доставки',
-        db_index=True
-    )
-    delivered_at = models.DateTimeField(
-        'доставили',
-        null=True,
-        blank=True,
-        db_index=True
-    )
-    comment = models.TextField(
-        'комментарий курьеру',
-        blank=True
-    )
-
-    class Meta():
-        verbose_name = 'доставка'
-        verbose_name_plural = 'доставки'
-
-    def __str__(self):
-        return f'№{self.id} - {self.address}'
-
-
 class Bakery(models.Model):
     title = models.CharField(
         'название кондитерской',
@@ -155,7 +127,12 @@ class Order(models.Model):
     ORDER_STATUSES = [
         ('PLACED', 'Оформлен'),
         ('DELIVERED', 'Доставляется'),
+        ('COMPLETE', 'Готов к выдаче'),
         ('TAKEN', 'Получен')
+    ]
+    RECEIPT_METHODS = [
+        ('DELIVERY', 'Доставка'),
+        ('PICKUP', 'Самовывоз')
     ]
 
     status = models.CharField(
@@ -164,22 +141,6 @@ class Order(models.Model):
         choices=ORDER_STATUSES,
         default='PLACED',
         db_index=True
-    )
-    delivery = models.OneToOneField(
-        Delivery,
-        on_delete=models.SET_NULL,
-        related_name='order',
-        verbose_name='доставка',
-        null=True,
-        blank=True
-    )
-    bakery = models.ForeignKey(
-        Bakery,
-        on_delete=models.SET_NULL,
-        related_name='orders',
-        verbose_name='лавка самовывоза',
-        null=True,
-        blank=True
     )
     client_name = models.CharField(
         'имя клиента',
@@ -194,6 +155,42 @@ class Order(models.Model):
     )
     comment = models.TextField(
         'комментарий к заказу',
+        blank=True
+    )
+    order_receipt_method = models.CharField(
+        'Способ получения заказа',
+        max_length=15,
+        choices=RECEIPT_METHODS,
+        default='PICKUP',
+        db_index=True
+    )
+    bakery = models.ForeignKey(
+        Bakery,
+        on_delete=models.SET_NULL,
+        related_name='orders',
+        verbose_name='кондитерская для самовывоза',
+        null=True,
+        blank=True
+    )
+    address = models.CharField(
+        'адрес доставки',
+        max_length=250,
+        blank=True
+    )
+    delivery_datetime = models.DateTimeField(
+        'дата и время доставки',
+        db_index=True,
+        null=True,
+        blank=True,
+    )
+    delivered_at = models.DateTimeField(
+        'доставили',
+        null=True,
+        blank=True,
+        db_index=True
+    )
+    delivery_comment = models.TextField(
+        'комментарий курьеру',
         blank=True
     )
     created_at = models.DateTimeField(
@@ -265,7 +262,7 @@ class OrderItems(models.Model):
 
     def __str__(self):
         if self.catalog_cake:
-            item_name = self.catalog_cake.title
+            item_name = f'Торт {self.catalog_cake.title}'
         else:
             item_name = self.component.title
         return f'Заказ № {self.order.id}. {item_name}, {self.quantity} шт.'
