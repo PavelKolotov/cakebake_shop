@@ -1,5 +1,8 @@
 # Интернет-магазин тортов CakeBake
 
+![image](https://github.com/dmitriev-ilya/cakebake_shop/assets/67222917/a21d4e3e-613e-494b-ad9e-6baa47bdcde8)
+
+
 ## Запуск
 
 Для запуска у вас уже должен быть установлен Python 3.
