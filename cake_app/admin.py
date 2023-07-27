@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from .models import CakeCategory
 from .models import CatalogCake
@@ -17,7 +18,19 @@ class CakeCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(CatalogCake)
 class CatalogCakeAdmin(admin.ModelAdmin):
-    pass
+    def preview_image(self, obj):
+        if not obj.image:
+            return 'выберите картинку'
+        return format_html('<img src="{url}" style="max-height: 200px;"/>', url=obj.image.url)
+    readonly_fields = ['preview_image',]
+    fields = [
+        'title',
+        'category',
+        'description',
+        'price',
+        'image',
+        'preview_image'
+    ]
 
 
 @admin.register(ComponentType)
