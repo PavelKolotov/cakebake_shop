@@ -48,7 +48,7 @@ class ComponentTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Component)
 class ComponentAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['title', 'component_type', 'price']
 
 
 @admin.register(Bakery)

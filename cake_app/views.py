@@ -1,5 +1,34 @@
 from django.shortcuts import render
 
+from .models import Component
+
 
 def index(request):
-    return render(request, 'index.html')
+    components = Component.objects.all()
+    cake_elements = {
+        'forms': components.filter(component_type_id=1),
+        'toppings': components.filter(component_type_id=2),
+        'berries': components.filter(component_type_id=3),
+        'decors': components.filter(component_type_id=4),
+        'sizes': components.filter(component_type_id=5)
+    }
+    cake_elements_json = {
+        'size_titles': {0: 'не выбрано'} | {item.id: item.title for item in cake_elements['sizes']},
+        'size_costs': {0: 0} | {item.id: int(item.price) for item in cake_elements['sizes']},
+        'form_titles': {0: 'не выбрано'} | {item.id: item.title for item in cake_elements['forms']},
+        'form_costs': {0: 0} | {item.id: int(item.price) for item in cake_elements['forms']},
+        'topping_titles': {0: 'не выбрано'} | {item.id: item.title for item in cake_elements['toppings']},
+        'topping_costs': {0: 0} | {item.id: int(item.price) for item in cake_elements['toppings']},
+        'berry_titles': {0: 'нет'} | {item.id: item.title for item in cake_elements['berries']},
+        'berry_costs': {0: 0} | {item.id: int(item.price) for item in cake_elements['berries']},
+        'decor_titles': {0: 'нет'} | {item.id: item.title for item in cake_elements['decors']},
+        'decor_costs': {0: 0} | {item.id: int(item.price) for item in cake_elements['decors']},
+    }
+    return render(
+        request,
+        template_name='index.html',
+        context={
+            'cake_elements': cake_elements,
+            'cake_elements_json': cake_elements_json
+        }
+    )
