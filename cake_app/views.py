@@ -1,9 +1,28 @@
 from django.shortcuts import render
 
-from .models import Component
+from .models import Component, Order
 
 
 def index(request):
+    phone = request.GET.get('PHONE')
+    if phone:
+        email = request.GET.get('EMAIL')
+        address = request.GET.get('ADDRESS')
+        order_date = request.GET.get('DATE')
+        order_time = request.GET.get('TIME')
+        comment = request.GET.get('DELIVCOMMENTS')
+        customer_name = request.GET.get('NAME')
+        cake_name = request.GET.get('COMMENTS')
+        order = Order.objects.create(
+            client_name=customer_name,
+            phonenumber=phone,
+            email=email,
+            comment=cake_name,
+            address=address,
+            delivery_datetime=order_date,
+            delivery_comment=f'{order_time} {comment}',
+            order_receipt_method='DELIVERY'
+        )
     components = Component.objects.all()
     cake_elements = {
         'forms': components.filter(component_type_id=1),
