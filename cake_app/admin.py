@@ -7,7 +7,8 @@ from .models import ComponentType
 from .models import Component
 from .models import Bakery
 from .models import Order
-from .models import OrderItems
+from .models import OrderComponents
+from .models import OrderCatalogCakes
 
 
 @admin.register(CakeCategory)
@@ -26,6 +27,7 @@ class CakeCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(CatalogCake)
 class CatalogCakeAdmin(admin.ModelAdmin):
+    list_display = ['title', 'category', 'price']
     def preview_image(self, obj):
         if not obj.image:
             return 'выберите картинку'
@@ -56,19 +58,25 @@ class BakeryAdmin(admin.ModelAdmin):
     pass
 
 
-class OrderItemsInline(admin.TabularInline):
-    model = OrderItems
+class OrderComponentsInline(admin.TabularInline):
+    model = OrderComponents
+
+
+class OrderCatalogCakesInline(admin.TabularInline):
+    model = OrderCatalogCakes
 
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     def total_price(self, obj):
-        order = Order.objects.prefetch_related('items').total_price().get(id=obj.id)
+        order = Order.objects.prefetch_related('items').prefetch_related('cakes').total_price().get(id=obj.id)
         return order.total_price
     total_price.short_description = 'общая стоимость заказа'
     readonly_fields = ['total_price',]
     fields = [
         'status',
+        'created_at',
+        'completed_at',
         'client_name',
         'phonenumber',
         'email',
@@ -79,15 +87,10 @@ class OrderAdmin(admin.ModelAdmin):
         'delivery_datetime',
         'delivered_at',
         'delivery_comment',
-        'created_at',
-        'completed_at',
-        'total_price'
+        'total_price',
+        'inscription'
     ]
     inlines = [
-        OrderItemsInline
+        OrderCatalogCakesInline,
+        OrderComponentsInline
     ]
-
-
-@admin.register(OrderItems)
-class OrderItemsAdmin(admin.ModelAdmin):
-    pass

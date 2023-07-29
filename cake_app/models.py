@@ -33,7 +33,8 @@ class CatalogCake(models.Model):
     category = models.ForeignKey(
         CakeCategory,
         on_delete=models.CASCADE,
-        related_name='cakes'
+        related_name='cakes',
+        verbose_name='категория торта'
     )
     price = models.DecimalField(
         'цена',
@@ -74,7 +75,8 @@ class Component(models.Model):
     component_type = models.ForeignKey(
         ComponentType,
         on_delete=models.CASCADE,
-        related_name='components'
+        related_name='components',
+        verbose_name='тип компонента'
     )
     price = models.DecimalField(
         'цена',
@@ -118,10 +120,9 @@ class OrderQuerySet(models.QuerySet):
     def total_price(self):
         return self.annotate(
             total_price=Sum(
-                F('items__price')*F('items__quantity')
+                F('cakes__price')*F('cakes__quantity')
             )
         )
-
 
 class Order(models.Model):
     ORDER_STATUSES = [
@@ -156,6 +157,10 @@ class Order(models.Model):
     comment = models.TextField(
         'комментарий к заказу',
         blank=True
+    )
+    inscription = models.TextField(
+        'надпись на торт',
+        blank=True,
     )
     order_receipt_method = models.CharField(
         'Способ получения заказа',
@@ -215,20 +220,12 @@ class Order(models.Model):
         return f'Заказ № {self.id}. {self.client_name}, телефон - {self.phonenumber}'
 
 
-class OrderItems(models.Model):
+class OrderComponents(models.Model):
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
         related_name='items',
         verbose_name='заказ'
-    )
-    catalog_cake = models.ForeignKey(
-        CatalogCake,
-        on_delete=models.SET_NULL,
-        related_name='order_items',
-        verbose_name='торт из каталога',
-        null=True,
-        blank=True
     )
     component = models.ForeignKey(
         Component,
@@ -243,11 +240,6 @@ class OrderItems(models.Model):
         validators=[MinValueValidator(1)],
         default=1
     )
-    inscription = models.TextField(
-        'надпись на торт',
-        blank=True,
-        help_text='заполняется для компонента "надпись"'
-    )
     price = models.DecimalField(
         'цена в заказе',
         max_digits=7,
@@ -260,9 +252,31 @@ class OrderItems(models.Model):
         verbose_name = 'состав заказа'
         verbose_name_plural = 'состав заказа'
 
-    def __str__(self):
-        if self.catalog_cake:
-            item_name = f'Торт {self.catalog_cake.title}'
-        else:
-            item_name = self.component.title
-        return f'Заказ № {self.order.id}. {item_name}, {self.quantity} шт.'
+
+class OrderCatalogCakes(models.Model):
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name='cakes',
+        verbose_name='заказ'
+    )
+    catalog_cake = models.ForeignKey(
+        CatalogCake,
+        on_delete=models.SET_NULL,
+        related_name='order_items',
+        verbose_name='торт из каталога',
+        null=True,
+        blank=True
+    )
+    quantity = models.PositiveIntegerField(
+        'количество',
+        validators=[MinValueValidator(1)],
+        default=1
+    )
+    price = models.DecimalField(
+        'цена в заказе',
+        max_digits=7,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        default=0
+    )
