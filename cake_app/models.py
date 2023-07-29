@@ -249,8 +249,8 @@ class OrderComponents(models.Model):
     )
 
     class Meta():
-        verbose_name = 'состав заказа'
-        verbose_name_plural = 'состав заказа'
+        verbose_name = 'ингридиенты в заказе'
+        verbose_name_plural = 'ингридиенты в заказе'
 
 
 class OrderCatalogCakes(models.Model):
@@ -280,3 +280,7 @@ class OrderCatalogCakes(models.Model):
         validators=[MinValueValidator(0)],
         default=0
     )
+
+    class Meta():
+        verbose_name = 'торты из каталога в заказе'
+        verbose_name_plural = 'торты из каталога в заказе'
