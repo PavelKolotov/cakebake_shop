@@ -62,6 +62,27 @@ class OrderItemsInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    def total_price(self, obj):
+        order = Order.objects.prefetch_related('items').total_price().get(id=obj.id)
+        return order.total_price
+    total_price.short_description = 'общая стоимость заказа'
+    readonly_fields = ['total_price',]
+    fields = [
+        'status',
+        'client_name',
+        'phonenumber',
+        'email',
+        'comment',
+        'order_receipt_method',
+        'bakery',
+        'address',
+        'delivery_datetime',
+        'delivered_at',
+        'delivery_comment',
+        'created_at',
+        'completed_at',
+        'total_price'
+    ]
     inlines = [
         OrderItemsInline
     ]
