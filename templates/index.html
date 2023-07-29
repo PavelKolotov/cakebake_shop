@@ -58,41 +58,22 @@
 				<span class="cake_grey fw-lighter">Уникальность и красота в пару кликов</span>
 				<a href="#step3" class="btn text-white rounded-pill px-5 mt-3 shadow-none cake__button cake__bg_pink">Создать</a>
 			</div>
-			<div class="position-fixed bottom-0 m-5 w-auto end-0">
-				<div class="d-flex">
-					<div class="cake__bg_blue rounded-pill p-3 border">
-						<img src="{% static 'img/intercom.svg' %}" alt="">
-					</div>
-				</div>
-			</div>
 		</article>
 
 		<article class="row pt-header d-flex justify-content-center" id="step2">
 			<h2 class="font_Gogh fs_40 cake_blue text-center mb-3">По любому поводу</h2>
+			{% for category in cake_category %}
+			<div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
+				<div class="card border-0 cake__hover">
+					<a href="{% url 'catalog' id=category.id %}" class="card-img-overlay"></a>
+					<img src="{{category.image.url}}" alt="{{category.title}}" class="">
+					<span class="cake_blue mt-4 fw-lighter mb-4 text-center">{{category.title}}</span>
+				</div>
+			</div>
+			{% endfor %}
 
-			<div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
-				<div class="card border-0 cake__hover">
-					<a href="#" class="card-img-overlay"></a>
-					<img src="{% static 'img/image1.png' %}" alt="" class="">
-					<span class="cake_blue mt-4 fw-lighter mb-4 text-center">На чаепитие</span>
-				</div>
-			</div>
-			<div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
-				<div class="card border-0 cake__hover">
-					<a href="#" class="card-img-overlay"></a>
-					<img src="{% static 'img/image2.png' %}" alt="" class="">
-					<span class="cake_blue mt-4 fw-lighter mb-4 text-center">На день рождения</span>
-				</div>
-			</div>
-			<div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
-				<div class="card border-0 cake__hover">
-					<a href="#" class="card-img-overlay"></a>
-					<img src="{% static 'img/image3.png' %}" alt="" class="">
-					<span class="cake_blue mt-4 fw-lighter mb-4 text-center">На свадьбу</span>
-				</div>
-			</div>
 			<div class="d-flex justify-content-center mt-2">
-				<button class="btn text-white rounded-pill shadow-none cake__button cake__bg_pink">Открыть каталог</button>
+				<a href="{% url 'catalog' id=99 %}" class="btn text-white rounded-pill shadow-none cake__button cake__bg_pink">Открыть каталог</a>
 			</div>
 		</article>
 
