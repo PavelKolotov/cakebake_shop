@@ -5,6 +5,8 @@
 {% endblock title %}
 {% block content %}
 <script>var cake_elements = {{ cake_elements_json|safe }}</script>
+<script>var cake_catalog = {{ cake_json|safe }}</script>
+
 	<main>
 	<div class="container mt-header">
 		<aside class="modal fade" id="RegModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="RegModalLabel" aria-hidden="true">
@@ -58,24 +60,6 @@
 				<a href="#step3" class="btn text-white rounded-pill px-5 mt-3 shadow-none cake__button cake__bg_pink">Создать</a>
 			</div>
 		</article>
-		<article class="row pt-header d-flex justify-content-right" id="step2">
-			<h2 class="font_Gogh fs_40 cake_blue text-center mb-6">Каталог вкусных тортов</h2>
-			{% for cake in cakes %}
-			<div class="mt-4 col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
-				<div class="card border-0">
-					<img width=100% src="{{cake.image.url}}" alt="{{cake.title}}" class="">
-					<span class="black pe-2 ps-2 mt-4 fw-lighter mb-3 text-right"><h4>{{cake.title}}</h4></span>
-					<span class="black pe-2 ps-2 fw-lighter mb-3 text-right">{{cake.category}}</span>
-					<span class="black pe-2 ps-2 fw-lighter mb-3 text-right">{{cake.description}}</span>
-					<span class="black pe-2 ps-2 fw-lighter mb-4 text-right">Цена: {{cake.price}} руб.</span>
-					<div class="pe-2 ps-2 d-flex justify-content-right mb-4">
-						<button class="btn text-white rounded-pill shadow-none cake__button cake__bg_pink">Купить
-						</button>
-					</div>
-				</div>
-			</div>
-			{% endfor %}
-		</article>
 
 		<article class="row pt-header text-center d-flex justify-content-center">
 			<h2 class="font_Gogh fs_40 cake_blue text-center mb-5">Оплата и доставка</h2>
@@ -105,40 +89,36 @@
 			</div>
 		</article>
 
-		<article id="VueApp">
+		<article id="VueAppCatalog">
 			<section class="row pt-header" id="step3">
-				<h2 class="font_Gogh fs_40 cake_blue text-center">Создать свой торт</h2>
+
 				<v-form :validation-schema="schema1" @submit="ToStep4">
-					<div class="d-flex justify-content-end align-items-center position-relative">
-				<span class="cake_pink position-absolute start-0 top-50">
-					<error-message name="lvls" class="from__alert"></error-message>
-					<error-message name="form" class="from__alert"></error-message>
-					<error-message name="topping" class="from__alert"></error-message>
-				</span>
-						{% verbatim %}<span class="z-index-1 fs_40 cake_pink text-end mt-5" id="cost">{{ Cost }}₽</span>{% endverbatim %}
-					</div>
-					<div class="d-flex align-items-center flex-wrap mb-3">
-						<span class="me-3 fs_40 cake_blue">Количество уровней</span>
-						{% for size in cake_elements.sizes %}
-							<v-field v-model="Levels" type="radio" name="lvls" id="num{{size.id}}" value="{{size.id}}" class="d-none cake__input"></v-field>
-							<label for="num{{size.id}}" class="mx-2 px-3 py-1 cake_grey cake__label">{{size.title}}</label>
+
+					<div class="row d-flex justify-content-right">
+						<h2 class="font_Gogh fs_40 cake_blue text-center mb-6">Каталог вкусных тортов</h2>
+						{% for cake in cakes %}
+						<div class="mt-4 col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
+							<div class="card border-0">
+								<img style="width: 100% !important;" src="{{cake.image.url}}" alt="{{cake.title}}">
+								<span class="black pe-2 ps-2 mt-4 fw-lighter mb-3 text-right"><h4>{{cake.title}}</h4></span>
+								<span class="black pe-2 ps-2 fw-lighter mb-3 text-right">{{cake.category}}</span>
+								<span class="black pe-2 ps-2 fw-lighter mb-3 text-right">{{cake.description}}</span>
+								<span class="black pe-2 ps-2 fw-lighter mb-4 text-right">Цена: {{cake.price}} руб.</span>
+								<div class="pe-2 ps-2 d-flex justify-content-right mb-4">
+									<v-field v-model="Cake" type="radio" name="cake" id="cake{{cake.id}}"
+											 value="{{cake.id}}" class="d-none cake__input"></v-field>
+									<label for="cake{{cake.id}}" class="mx-2 px-3 py-1 cake_grey cake__label">Купить</label>
+								</div>
+
+							</div>
+						</div>
 						{% endfor %}
 					</div>
 
-					<div class="d-flex align-items-center flex-wrap mb-3">
-						<span class="me-3 fs_40 cake_blue">Форма</span>
-						{% for form in cake_elements.forms %}
-							<v-field v-model="Form" type="radio" name="form" id="form{{form.id}}" value="{{form.id}}" class="d-none cake__input"></v-field>
-							<label for="form{{form.id}}" class="mx-2 px-3 py-1 cake_grey cake__label">{{form.title}}</label>
-						{% endfor %}
+					<div class="d-flex justify-content-end align-items-center position-relative">
+						{% verbatim %}<span class="z-index-1 fs_40 cake_pink text-end mt-5" id="cost">{{ Cost }}₽</span>{% endverbatim %}
 					</div>
-					<div class="d-flex align-items-center flex-wrap mb-3">
-						<span class="me-3 fs_40 cake_blue">Топпинг</span>
-						{% for topping in cake_elements.toppings %}
-							<v-field v-model="Topping" type="radio" name="topping" id="topping{{topping.id}}" value="{{topping.id}}" class="d-none cake__input"></v-field>
-							<label for="topping{{topping.id}}" class="mx-2 px-3 py-1 cake_grey cake__label">{{topping.title}}</label>
-						{% endfor %}
-					</div>
+
 					<h1 class="me-3 fs_40 cake_pink mb-3 mt-5">Дополнительно</h1>
 					<div class="d-flex align-items-center flex-wrap mb-3">
 						<span class="me-3 fs_40 cake_blue">Ягоды</span>
@@ -175,22 +155,6 @@
 
 			<section class="row pt-header" id="step4" v-if="Designed">
 				<form class="d-none">
-					<input v-model="Levels" value="1" type="radio" name="LEVELS">
-					<input v-model="Levels" value="2" type="radio" name="LEVELS">
-					<input v-model="Levels" value="3" type="radio" name="LEVELS">
-					<br>
-					<input v-model="Form" value="1" type="radio" name="FORM">
-					<input v-model="Form" value="2" type="radio" name="FORM">
-					<input v-model="Form" value="3" type="radio" name="FORM">
-					<br>
-					<input v-model="Topping" value="1" type="radio" name="TOPPING">
-					<input v-model="Topping" value="2" type="radio" name="TOPPING">
-					<input v-model="Topping" value="3" type="radio" name="TOPPING">
-					<input v-model="Topping" value="4" type="radio" name="TOPPING">
-					<input v-model="Topping" value="5" type="radio" name="TOPPING">
-					<input v-model="Topping" value="6" type="radio" name="TOPPING">
-					<input v-model="Topping" value="7" type="radio" name="TOPPING">
-					<br>
 					<input v-model="Berries" value="1" type="radio" name="BERRIES">
 					<input v-model="Berries" value="2" type="radio" name="BERRIES">
 					<input v-model="Berries" value="3" type="radio" name="BERRIES">
@@ -252,9 +216,10 @@
 								<div class="cake__card p-4 position-relative cake_grey">
 									<span class="cake__badge rounded-pill">?</span>
 									{% verbatim %}
-										<span>Количество уровней: {{ DATA.Levels[Levels] }}</span>
-										<span>Форма уровней: {{ DATA.Forms[Form] }}</span>
-										<p>Топинг: {{ DATA.Toppings[Topping] }}</p>
+										<span>Торт:</span>
+										<ul>
+											<li>{{ DATA.Cake[Cake] }}</li>
+										</ul>
 										<span>Дополнительно:</span>
 										<ul>
 											<li>Ягоды: {{ DATA.Berries[Berries] }}</li>
@@ -305,5 +270,7 @@
 	</div>
     </main>
 
-
 {% endblock content %}
+{% block script %}
+<script src="{% static '/catalog.js' %}"></script>
+{% endblock script %}

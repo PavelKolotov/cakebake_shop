@@ -43,6 +43,7 @@ def index(request):
         'decor_titles': {0: 'нет'} | {item.id: item.title for item in cake_elements['decors']},
         'decor_costs': {0: 0} | {item.id: int(item.price) for item in cake_elements['decors']},
     }
+
     return render(
         request,
         template_name='index.html',
@@ -94,10 +95,16 @@ def catalog_api(request, id):
         'decor_titles': {0: 'нет'} | {item.id: item.title for item in cake_elements['decors']},
         'decor_costs': {0: 0} | {item.id: int(item.price) for item in cake_elements['decors']},
     }
-    if id == 99:
+
+    if not id:
         cakes = CatalogCake.objects.all()
     else:
         cakes = CatalogCake.objects.filter(category_id=id)
+
+    cake_json = {
+        'cake_titles': {0: 'не выбрано'} | {item.id: item.title for item in cakes},
+        'cake_costs': {0: 0} | {item.id: int(item.price) for item in cakes},
+    }
 
     return render(
         request,
@@ -105,6 +112,7 @@ def catalog_api(request, id):
         context={
             'cake_elements': cake_elements,
             'cake_elements_json': cake_elements_json,
-            'cakes': cakes
+            'cakes': cakes,
+            'cake_json': cake_json
         }
     )
