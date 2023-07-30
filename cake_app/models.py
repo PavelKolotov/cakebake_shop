@@ -117,12 +117,32 @@ class Bakery(models.Model):
 
 
 class OrderQuerySet(models.QuerySet):
-    def total_price(self):
-        return self.annotate(
+    def fetch_with_total_price(self):
+        orders_ids = [order.id for order in self]
+        with_cakes_price_qs = Order.objects.filter(id__in=orders_ids).annotate(
             total_price=Sum(
                 F('cakes__price')*F('cakes__quantity')
             )
         )
+        with_components_price_qs = Order.objects.filter(id__in=orders_ids).annotate(
+            total_price=Sum(
+                F('components__price')*F('components__quantity')
+            )
+        )
+        ids_and_cakes_price = dict(with_cakes_price_qs.values_list('id', 'total_price'))
+        print(ids_and_cakes_price)
+        ids_and_components_price = dict(with_components_price_qs.values_list('id', 'total_price'))
+        print(ids_and_components_price)
+        for order in self:
+            component_total_price = 0
+            cakes_total_price = 0
+            if ids_and_components_price[order.id]:
+                component_total_price = ids_and_components_price[order.id]
+            if ids_and_cakes_price[order.id]:
+                cakes_total_price = ids_and_cakes_price[order.id]
+            order.total_price = component_total_price + cakes_total_price
+        return self
+
 
 class Order(models.Model):
     ORDER_STATUSES = [
@@ -224,13 +244,13 @@ class OrderComponents(models.Model):
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
-        related_name='items',
+        related_name='components',
         verbose_name='заказ'
     )
     component = models.ForeignKey(
         Component,
         on_delete=models.SET_NULL,
-        related_name='order_items',
+        related_name='order_components',
         verbose_name='компонент торта',
         null=True,
         blank=True
@@ -263,7 +283,7 @@ class OrderCatalogCakes(models.Model):
     catalog_cake = models.ForeignKey(
         CatalogCake,
         on_delete=models.SET_NULL,
-        related_name='order_items',
+        related_name='order_cakes',
         verbose_name='торт из каталога',
         null=True,
         blank=True
