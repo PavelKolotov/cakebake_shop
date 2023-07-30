@@ -1,8 +1,9 @@
+from django.contrib import admin
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import F, Sum
-from django.core.validators import MinValueValidator
-from phonenumber_field.modelfields import PhoneNumberField
 from django.utils import timezone
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class CakeCategory(models.Model):
@@ -121,12 +122,12 @@ class OrderQuerySet(models.QuerySet):
         orders_ids = [order.id for order in self]
         with_cakes_price_qs = Order.objects.filter(id__in=orders_ids).annotate(
             total_price=Sum(
-                F('cakes__price')*F('cakes__quantity')
+                F('cakes__price') * F('cakes__quantity')
             )
         )
         with_components_price_qs = Order.objects.filter(id__in=orders_ids).annotate(
             total_price=Sum(
-                F('components__price')*F('components__quantity')
+                F('components__price') * F('components__quantity')
             )
         )
         ids_and_cakes_price = dict(with_cakes_price_qs.values_list('id', 'total_price'))
@@ -135,6 +136,111 @@ class OrderQuerySet(models.QuerySet):
             total_prices = [ids_and_components_price[order.id], ids_and_cakes_price[order.id]]
             order.total_price = sum([price for price in total_prices if price])
         return self
+
+
+class Toppings(models.Model):
+    title = models.CharField(
+        'Топпинг',
+        max_length=100
+    )
+    price = models.DecimalField(
+        'Цена',
+        max_digits=7,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        default=0
+    )
+
+    class Meta():
+        verbose_name = 'топпинг'
+        verbose_name_plural = 'топпинги'
+
+    def __str__(self):
+        return self.title
+
+
+class Forms(models.Model):
+    title = models.CharField(
+        'Форма торта',
+        max_length=100
+    )
+    price = models.DecimalField(
+        'Цена',
+        max_digits=7,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        default=0
+    )
+
+    class Meta():
+        verbose_name = 'форма'
+        verbose_name_plural = 'формы'
+
+    def __str__(self):
+        return self.title
+
+
+class Berries(models.Model):
+    title = models.CharField(
+        'Ягода',
+        max_length=100
+    )
+    price = models.DecimalField(
+        'Цена',
+        max_digits=7,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        default=0
+    )
+
+    class Meta():
+        verbose_name = 'ягода'
+        verbose_name_plural = 'ягоды'
+
+    def __str__(self):
+        return self.title
+
+
+class Decors(models.Model):
+    title = models.CharField(
+        'Декор',
+        max_length=100
+    )
+    price = models.DecimalField(
+        'Цена',
+        max_digits=7,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        default=0
+    )
+
+    class Meta():
+        verbose_name = 'декор'
+        verbose_name_plural = 'декоры'
+
+    def __str__(self):
+        return self.title
+
+
+class Sizes(models.Model):
+    title = models.CharField(
+        'Количество уровней торта',
+        max_length=100
+    )
+    price = models.DecimalField(
+        'Цена',
+        max_digits=7,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        default=0
+    )
+
+    class Meta():
+        verbose_name = 'размер'
+        verbose_name_plural = 'размеры'
+
+    def __str__(self):
+        return self.title
 
 
 class Order(models.Model):
@@ -222,6 +328,55 @@ class Order(models.Model):
         blank=True,
         db_index=True
     )
+    cake_size = models.ForeignKey(
+        Sizes,
+        on_delete=models.CASCADE,
+        related_name='orders',
+        verbose_name='Количество уровней торта'
+    )
+    cake_decor = models.ForeignKey(
+        Decors,
+        on_delete=models.CASCADE,
+        related_name='orders',
+        verbose_name='Декор'
+    )
+    cake_berry = models.ForeignKey(
+        Berries,
+        on_delete=models.CASCADE,
+        related_name='orders',
+        verbose_name='Ягоды'
+    )
+    cake_form = models.ForeignKey(
+        Forms,
+        on_delete=models.CASCADE,
+        related_name='orders',
+        verbose_name='Форма торта'
+    )
+    cake_topping = models.ForeignKey(
+        Toppings,
+        on_delete=models.CASCADE,
+        related_name='orders',
+        verbose_name='Топпинг'
+    )
+    total_cost = models.IntegerField(
+        'Стоимость заказа',
+        null=True,
+        blank=True
+    )
+
+    @admin.display(description='Выбранный торт')
+    def cake_option(self):
+        cake_option = f'{self.cake_size.title} • {self.cake_form.title} • {self.cake_topping.title}'
+        if self.cake_berry:
+            cake_option += f' • {self.cake_berry.title}'
+        if self.cake_decor:
+            cake_option += f' • {self.cake_decor.title}'
+        if self.inscription:
+            cake_option += f' • {self.inscription}'
+        return cake_option
+
+    def __str__(self):
+        return self.cake_type()
 
     objects = OrderQuerySet.as_manager()
 
