@@ -73,7 +73,7 @@
 			{% endfor %}
 
 			<div class="d-flex justify-content-center mt-2">
-				<a href="{% url 'catalog' id=99 %}" class="btn text-white rounded-pill shadow-none cake__button cake__bg_pink">Открыть каталог</a>
+				<a href="{% url 'catalog' id=0 %}" class="btn text-white rounded-pill shadow-none cake__button cake__bg_pink">Открыть каталог</a>
 			</div>
 		</article>
 
@@ -305,3 +305,6 @@
 	</div>
 </main>
 {% endblock content %}
+{% block script %}
+<script src="{% static '/index.js' %}"></script>
+{% endblock script %}
