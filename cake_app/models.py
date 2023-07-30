@@ -130,17 +130,10 @@ class OrderQuerySet(models.QuerySet):
             )
         )
         ids_and_cakes_price = dict(with_cakes_price_qs.values_list('id', 'total_price'))
-        print(ids_and_cakes_price)
         ids_and_components_price = dict(with_components_price_qs.values_list('id', 'total_price'))
-        print(ids_and_components_price)
         for order in self:
-            component_total_price = 0
-            cakes_total_price = 0
-            if ids_and_components_price[order.id]:
-                component_total_price = ids_and_components_price[order.id]
-            if ids_and_cakes_price[order.id]:
-                cakes_total_price = ids_and_cakes_price[order.id]
-            order.total_price = component_total_price + cakes_total_price
+            total_prices = [ids_and_components_price[order.id], ids_and_cakes_price[order.id]]
+            order.total_price = sum([price for price in total_prices if price])
         return self
 
 
