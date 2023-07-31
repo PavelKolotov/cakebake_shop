@@ -26,7 +26,9 @@ def get_cake_element():
     return cake_elements, cake_elements_json
 
 
+
 def create_order(request, id=None):
+
     email = request.GET.get('EMAIL')
     address = request.GET.get('ADDRESS')
     order_date = request.GET.get('DATE')
@@ -113,6 +115,7 @@ def create_order(request, id=None):
             quantity=1,
             price=cake.price
         )
+
 
 
 def index(request):
