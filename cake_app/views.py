@@ -27,7 +27,6 @@ def get_cake_element():
 
 
 def create_order(request):
-    print('request:', request)
     email = request.GET.get('EMAIL')
     address = request.GET.get('ADDRESS')
     order_date = request.GET.get('DATE')
@@ -60,7 +59,7 @@ def create_order(request):
         order_date_dtobj = datetime.datetime.strptime(order_date, '%Y-%m-%d')
         min_date = datetime.datetime.now() + datetime.timedelta(days=1)
         if order_date_dtobj < min_date:
-            total_cost = total_cost * 1.2
+            total_cost = int(total_cost) * 1.2
     order = Order.objects.create(
         client_name=customer_name,
         phonenumber=phone,
