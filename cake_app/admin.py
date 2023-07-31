@@ -24,7 +24,7 @@ class CakeCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(CatalogCake)
 class CatalogCakeAdmin(admin.ModelAdmin):
-    list_display = ['title', 'category', 'price']
+    list_display = ['id','title', 'category', 'price']
 
     def preview_image(self, obj):
         if not obj.image:
@@ -59,7 +59,7 @@ class OrderCatalogCakesInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['client_name', 'cake_option', 'delivery_comment', 'delivery_datetime', 'delivery_comment',
+    list_display = ['client_name', 'cake_option', 'comment', 'delivery_datetime', 'delivery_comment',
                     'total_cost']
     search_fields = ['client_name', 'phonenumber']
     list_filter = ['status', 'order_receipt_method']

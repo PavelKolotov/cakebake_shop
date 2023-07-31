@@ -57,7 +57,7 @@
 			<div class="col-12 col-xxl-6 d-flex flex-column justify-content-center align-items-center align-items-xxl-start">
 				<h1 class="font_Gogh fs_40 cake_blue">Создайте торт своей мечты</h1>
 				<span class="cake_grey fw-lighter">Уникальность и красота в пару кликов</span>
-				<a href="#step3" class="btn text-white rounded-pill px-5 mt-3 shadow-none cake__button cake__bg_pink">Создать</a>
+				<a href="{% url 'index' %}#step3" class="btn text-white rounded-pill px-5 mt-3 shadow-none cake__button cake__bg_pink">Создать</a>
 			</div>
 		</article>
 
@@ -155,17 +155,17 @@
 
 			<section class="row pt-header" id="step4" v-if="Designed">
 				<form class="d-none">
-					<input v-model="Berries" value="1" type="radio" name="BERRIES">
-					<input v-model="Berries" value="2" type="radio" name="BERRIES">
-					<input v-model="Berries" value="3" type="radio" name="BERRIES">
-					<input v-model="Berries" value="4" type="radio" name="BERRIES">
+					{% for cake in cakes %}
+					  <input v-model="Cake" value="{{cake.id}}" type="radio" name="CAKE">
+					{% endfor %}
 					<br>
-					<input v-model="Decor" value="1" type="radio" name="DECOR">
-					<input v-model="Decor" value="2" type="radio" name="DECOR">
-					<input v-model="Decor" value="3" type="radio" name="DECOR">
-					<input v-model="Decor" value="4" type="radio" name="DECOR">
-					<input v-model="Decor" value="5" type="radio" name="DECOR">
-					<input v-model="Decor" value="6" type="radio" name="DECOR">
+					{% for berry in cake_elements.berries %}
+					  <input v-model="Berries" value="{{berry.id}}" type="radio" name="BERRIES">
+					{% endfor %}
+					<br>
+					{% for decor in cake_elements.decors %}
+					  <input v-model="Decor" value="{{decor.id}}" type="radio" name="DECOR">
+					{% endfor %}
 					<br>
 					<input v-model="Words" type="text" name="WORDS">
 					<input v-model="Comments" type="text" name="COMMENTS">
