@@ -24,7 +24,7 @@ class CakeCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(CatalogCake)
 class CatalogCakeAdmin(admin.ModelAdmin):
-    list_display = ['id','title', 'category', 'price']
+    list_display = ['title', 'category', 'price']
 
     def preview_image(self, obj):
         if not obj.image:
