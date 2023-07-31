@@ -57,16 +57,16 @@ def create_order(request, id=None):
         total_cost = total_cost + 500
 
     if not id:
+        cake_form_obj = Forms.objects.get(id=form)
+        cake_levels_obj = Sizes.objects.get(id=levels)
+        cake_topping_obj = Toppings.objects.get(id=topping)
+        total_cost += int(cake_form_obj.price + cake_levels_obj.price + cake_topping_obj.price)
         if order_date:
             order_date_dtobj = datetime.datetime.strptime(order_date, '%Y-%m-%d')
             min_date = datetime.datetime.now() + datetime.timedelta(days=1)
             if order_date_dtobj < min_date:
                 total_cost = int(total_cost) * 1.2
 
-        cake_form_obj = Forms.objects.get(id=form)
-        cake_levels_obj = Sizes.objects.get(id=levels)
-        cake_topping_obj = Toppings.objects.get(id=topping)
-        total_cost += int(cake_form_obj.price + cake_levels_obj.price + cake_topping_obj.price)
         order = Order.objects.create(
             client_name=customer_name,
             phonenumber=phone,
