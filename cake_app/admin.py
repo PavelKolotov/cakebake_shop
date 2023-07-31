@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 
 from .models import (
-    Bakery, Berries, CakeCategory, CatalogCake, Component, ComponentType, Decors, Forms, Order,
+    Bakery, Berries, CakeCategory, CatalogCake, Decors, Forms, Order,
     OrderCatalogCakes, OrderComponents, Sizes, Toppings,
 )
 
@@ -42,18 +42,6 @@ class CatalogCakeAdmin(admin.ModelAdmin):
     ]
     list_filter = ['category']
     search_fields = ['title', 'description']
-
-
-@admin.register(ComponentType)
-class ComponentTypeAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Component)
-class ComponentAdmin(admin.ModelAdmin):
-    list_display = ['title', 'component_type', 'price']
-    list_filter = ['component_type']
-    search_fields = ['title']
 
 
 @admin.register(Bakery)
