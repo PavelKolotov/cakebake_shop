@@ -332,31 +332,41 @@ class Order(models.Model):
         Sizes,
         on_delete=models.CASCADE,
         related_name='orders',
-        verbose_name='Количество уровней торта'
+        verbose_name='Количество уровней торта',
+        null=True,
+        blank=True,
     )
     cake_decor = models.ForeignKey(
         Decors,
         on_delete=models.CASCADE,
         related_name='orders',
-        verbose_name='Декор'
+        verbose_name='Декор',
+        null=True,
+        blank=True,
     )
     cake_berry = models.ForeignKey(
         Berries,
         on_delete=models.CASCADE,
         related_name='orders',
-        verbose_name='Ягоды'
+        verbose_name='Ягоды',
+        null=True,
+        blank=True,
     )
     cake_form = models.ForeignKey(
         Forms,
         on_delete=models.CASCADE,
         related_name='orders',
-        verbose_name='Форма торта'
+        verbose_name='Форма торта',
+        null=True,
+        blank=True,
     )
     cake_topping = models.ForeignKey(
         Toppings,
         on_delete=models.CASCADE,
         related_name='orders',
-        verbose_name='Топпинг'
+        verbose_name='Топпинг',
+        null=True,
+        blank=True,
     )
     total_cost = models.IntegerField(
         'Стоимость заказа',
@@ -366,7 +376,13 @@ class Order(models.Model):
 
     @admin.display(description='Выбранный торт')
     def cake_option(self):
-        cake_option = f'{self.cake_size.title} • {self.cake_form.title} • {self.cake_topping.title}'
+        cake_option = 'Состав:'
+        if self.cake_size:
+            cake_option += f' • {self.cake_size.title}'
+        if self.cake_form:
+            cake_option += f' • {self.cake_form.title}'
+        if self.cake_topping:
+            cake_option += f' • {self.cake_topping.title}'
         if self.cake_berry:
             cake_option += f' • {self.cake_berry.title}'
         if self.cake_decor:
