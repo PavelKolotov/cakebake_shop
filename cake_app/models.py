@@ -54,47 +54,6 @@ class CatalogCake(models.Model):
         return self.title
 
 
-class ComponentType(models.Model):
-    title = models.CharField(
-        'название типа',
-        max_length=100
-    )
-
-    class Meta():
-        verbose_name = 'тип компонента'
-        verbose_name_plural = 'типы компонентов'
-
-    def __str__(self):
-        return self.title
-
-
-class Component(models.Model):
-    title = models.CharField(
-        'название компонента',
-        max_length=100
-    )
-    component_type = models.ForeignKey(
-        ComponentType,
-        on_delete=models.CASCADE,
-        related_name='components',
-        verbose_name='тип компонента'
-    )
-    price = models.DecimalField(
-        'цена',
-        max_digits=7,
-        decimal_places=2,
-        validators=[MinValueValidator(0)],
-        default=0
-    )
-
-    class Meta():
-        verbose_name = 'компонент'
-        verbose_name_plural = 'компоненты'
-
-    def __str__(self):
-        return self.title
-
-
 class Bakery(models.Model):
     title = models.CharField(
         'название кондитерской',
@@ -411,14 +370,6 @@ class OrderComponents(models.Model):
         on_delete=models.CASCADE,
         related_name='components',
         verbose_name='заказ'
-    )
-    component = models.ForeignKey(
-        Component,
-        on_delete=models.SET_NULL,
-        related_name='order_components',
-        verbose_name='компонент торта',
-        null=True,
-        blank=True
     )
     quantity = models.PositiveIntegerField(
         'количество',
